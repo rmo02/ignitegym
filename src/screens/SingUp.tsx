@@ -4,13 +4,12 @@ import LogoSvg from "@assets/logo.svg";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { useNavigation } from "@react-navigation/native";
-import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
-export function SingIn() {
-  const navigation = useNavigation<AuthNavigatorRoutesProps>();
+export function SingUp() {
+  const navigation = useNavigation();
 
-  function handleNewAccount() {
-    navigation.navigate("singUp");
+  function handleGoBack() {
+    navigation.goBack();
   }
 
   return (
@@ -36,8 +35,10 @@ export function SingIn() {
 
         <Center>
           <Heading color="gray.100" fontSize="xl" mb={6} fontFamily="heading">
-            Acesse sua conta
+            Crie sua conta
           </Heading>
+
+          <Input placeholder="Nome" />
 
           <Input
             placeholder="Email"
@@ -47,20 +48,15 @@ export function SingIn() {
 
           <Input placeholder="Senha" secureTextEntry />
 
-          <Button title="Acessar" />
+          <Button title="Criar e acessar" />
         </Center>
 
-        <Center mt={24}>
-          <Text color="gray.100" fontSize="sm" mb={3} fontFamily="body">
-            Ainda não tem acesso?
-          </Text>
-
-          <Button
-            title="Criar conta"
-            variant="outline"
-            onPress={handleNewAccount}
-          />
-        </Center>
+        <Button
+          title="Voltar para login"
+          variant="outline"
+          mt={24}
+          onPress={handleGoBack}
+        />
       </VStack>
     </ScrollView>
   );

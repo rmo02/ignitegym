@@ -1,8 +1,8 @@
 import { Loading } from '@components/Loading';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
-import { SingIn } from '@screens/SingIn';
+import { Routes } from '@routes/index';
 import { NativeBaseProvider } from 'native-base';
-import { View, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { THEME } from './src/theme';
 
 
@@ -18,7 +18,7 @@ export default function App() {
       translucent
       />
       {
-        fontsLoaded ? <SingIn /> : <Loading />
+        fontsLoaded ? <Routes/> : <Loading />
       }
     </NativeBaseProvider>
   );
