@@ -1,8 +1,10 @@
 import { Loading } from '@components/Loading';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
+import { SingIn } from '@screens/SingIn';
 import { NativeBaseProvider } from 'native-base';
 import { View, StatusBar } from 'react-native';
-import { THEME } from 'src/theme';
+import { THEME } from './src/theme';
+
 
 export default function App() {
   const [fontsLoaded] = useFonts({Roboto_400Regular, Roboto_700Bold});
@@ -16,7 +18,7 @@ export default function App() {
       translucent
       />
       {
-        fontsLoaded ? <View /> : <Loading />
+        fontsLoaded ? <SingIn /> : <Loading />
       }
     </NativeBaseProvider>
   );
