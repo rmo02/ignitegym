@@ -1,6 +1,6 @@
 import { Heading, HStack, Image, Text, VStack, Icon } from "native-base";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import {Entypo} from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
 
 type Props = TouchableOpacityProps & {};
 
@@ -24,7 +24,7 @@ export function ExerciseCard({ ...rest }: Props) {
           h={16}
           rounded="md"
           mr={4}
-          resizeMode='center'
+          resizeMode="center"
         />
 
         <VStack flex={1}>
@@ -37,7 +37,7 @@ export function ExerciseCard({ ...rest }: Props) {
             3 séries x 12 repetições
           </Text>
         </VStack>
-        <Icon as={Entypo} name='chevron-thin-right' color='gray.300'/>
+        <Icon as={Entypo} name="chevron-thin-right" color="gray.300" />
       </HStack>
     </TouchableOpacity>
   );

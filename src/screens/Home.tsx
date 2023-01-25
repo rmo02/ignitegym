@@ -5,14 +5,14 @@ import { Center, FlatList, Heading, HStack, Text, VStack } from "native-base";
 import { useState } from "react";
 
 export function Home() {
-  const [group, setGroup] = useState(["Costas", "Bícepes", "Tríceps", "ombro"]);
+  const [group, setGroup] = useState(["Costas", "Bicepes", "Triceps", "ombro"]);
   const [exercises, setExercises] = useState([
     "Puxada frontal",
     "Remada curvada",
     "Remada unilateral",
     "Levantamento terra",
   ]);
-  const [groupSelected, setGroupSelected] = useState("costa");
+  const [groupSelected, setGroupSelected] = useState("costas");
   return (
     <VStack flex={1}>
       <HomeHeader />
@@ -22,7 +22,7 @@ export function Home() {
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <Group
-            isActive={groupSelected === item}
+            isActive={groupSelected.toLocaleUpperCase() === item.toLocaleUpperCase(item)}
             onPress={() => setGroupSelected(item)}
             name={item}
           />
