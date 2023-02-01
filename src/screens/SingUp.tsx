@@ -17,6 +17,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
+import { useState } from "react";
+import { useAuth } from "@hooks/useAuth";
 
 type FormDataProps = {
   name: string;
@@ -39,8 +41,10 @@ const singUpSchema = yup.object({
 });
 
 export function SingUp() {
+  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const navigation = useNavigation();
+  const { singIn } = useAuth();
 
   const {
     control,
@@ -54,15 +58,15 @@ export function SingUp() {
     navigation.goBack();
   }
 
-  async function handleSingUp({
-    name,
-    email,
-    password,
-    password_confirm,
-  }: FormDataProps) {
+  async function handleSingUp({ name, email, password }: FormDataProps) {
     try {
-      const response = await api.post("/users", { name, email, password });
+      setIsLoading(true);
+
+      await api.post("/users", { name, email, password });
+      await singIn(email, password);
     } catch (error) {
+      setIsLoading(false);
+
       const isAppError = error instanceof AppError;
       const title = isAppError
         ? error.message
@@ -160,6 +164,7 @@ export function SingUp() {
           <Button
             title="Criar e acessar"
             onPress={handleSubmit(handleSingUp)}
+            isLoading={isLoading}
           />
         </Center>
 
