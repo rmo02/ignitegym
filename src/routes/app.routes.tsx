@@ -19,7 +19,7 @@ type AppRoutes = {
   history: undefined;
 };
 
-export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>;
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
 
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
 
