@@ -15,8 +15,12 @@ import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "@hooks/useAuth";
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
 
 const PHOTO_SIZE = 33;
 
@@ -28,16 +32,44 @@ type FormDataProps = {
   confirm_password: string;
 };
 
+const profileSchema = yup.object({
+  name: yup.string().required("informe o nome"),
+  password: yup
+    .string()
+    .min(6, "A senha deve ter pelo menos 6 dígitos")
+    .nullable()
+    .transform((value) => (!!value ? value : null)),
+  confirm_password: yup
+    .string()
+    .nullable()
+    .transform((value) => (!!value ? value : null))
+    .oneOf([yup.ref("password"), null], "A confirmação da senha não confere")
+    .when("password", {
+      is: (Field: any) => Field,
+      then: yup
+        .string()
+        .nullable()
+        .required("Informe a confirmação da senha")
+        .transform((value) => (!!value ? value : null)),
+    }),
+});
+
 export function Profile() {
+  const [ isUpdating, setIsUpdating ] = useState(false)
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
   const [userPhoto, setUserPhoto] = useState("https://github.com/rmo02.png");
   const toast = useToast();
-  const { user } = useAuth();
-  const { control, handleSubmit } = useForm<FormDataProps>({
+  const { user, updateUserProfile } = useAuth();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
     defaultValues: {
       name: user.name,
       email: user.email,
     },
+    resolver: yupResolver(profileSchema),
   });
 
   async function handleUserPhotoSelect() {
@@ -74,8 +106,30 @@ export function Profile() {
     }
   }
 
-  async function handleProfileUpdate(data:FormDataProps) {
-    
+  async function handleProfileUpdate(data: FormDataProps) {
+    try {
+      setIsUpdating(true);
+      const userUpdated = user;
+      userUpdated.name = data.name;
+      await api.put('/users', data)
+      await updateUserProfile(userUpdated);
+      toast.show({
+        title:'Perfil atualizado com sucesso!',
+        placement:'top',
+        bgColor:'green.500'
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : 'Não foi possível atualizar os dados. Tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement:'top',
+        bgColor:'red.500'
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   }
 
   return (
@@ -121,6 +175,7 @@ export function Profile() {
                 bg="gray.600"
                 onChangeText={onChange}
                 value={value}
+                errorMessage={errors.name?.message}
               />
             )}
           />
@@ -167,6 +222,7 @@ export function Profile() {
                 bg="gray.600"
                 onChangeText={onChange}
                 secureTextEntry
+                errorMessage={errors.password?.message}
               />
             )}
           />
@@ -180,11 +236,17 @@ export function Profile() {
                 bg="gray.600"
                 onChangeText={onChange}
                 secureTextEntry
+                errorMessage={errors.confirm_password?.message}
               />
             )}
           />
 
-          <Button title="Atualizar" mt={4}  onPress={handleSubmit(handleProfileUpdate)}/>
+          <Button
+            title="Atualizar"
+            mt={4}
+            onPress={handleSubmit(handleProfileUpdate)}
+            isLoading={isUpdating}
+          />
         </VStack>
       </ScrollView>
     </VStack>
